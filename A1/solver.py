@@ -105,18 +105,14 @@ def bfs(start_node, goal_node):
     frontier = deque([start_node])
     explored = {start_node}
     parent_map = {start_node: None}
-    path = []
 
     while frontier:
         current = frontier.popleft()
         explored.add(current)
 
         if current == goal_node:
-            while current is not None:
-                path.append(current.value)
-                current = parent_map[current]
-                path.reverse()
-                return path 
+            path = reconstruct_path(current, parent_map)
+            return path 
             
         for neighbor in current.neighbors:
             if neighbor not in explored:
@@ -148,18 +144,14 @@ def dfs(start_node, goal_node):
     frontier = [start_node]
     explored = {start_node}
     parent_map = {start_node: None}
-    path = []
     
     while frontier:
         current = frontier.pop()
         explored.add(current)
     
         if current == goal_node:
-            while current is not None:
-                path.append(current.value)
-                current = parent_map[current]
-                path.reverse()
-                return path 
+            path = reconstruct_path(current, parent_map)
+            return path 
                 
         for neighbor in current.neighbors:
             if neighbor not in explored:
@@ -187,6 +179,30 @@ def astar(start_node, goal_node):
       4. Expand the node with the smallest f_score, update neighbors if a better path is found.
     """
     # TODO: Implement A*
+    if start_node is None or goal_node is None:
+        return None 
+        
+    frontier = []
+    heapq.heappush(frontier, (0, start_node))
+
+    parent_map = {start_node: None}
+    g_score = {start_node: 0}
+    
+    while frontier:
+        f, current = heapq.heappop(frontier)
+    
+        if current == goal_node:
+            path = reconstruct_path(current, parent_map)
+            return path 
+                
+        for neighbor in current.neighbors:
+            g_new = g_score[current] + 1
+            if g_new < g_score.get(neighbor, float("inf")):
+                g_score[neighbor] = g_new
+                f_score = g_score[neighbor]+manhattan_distance(neighbor, goal_node)
+                parent_map[neighbor] = current
+                heapq.heappush(frontier, (f_score, neighbor))
+    
     return None
 
 def manhattan_distance(node_a, node_b):
@@ -195,7 +211,10 @@ def manhattan_distance(node_a, node_b):
     if they are (row, col) pairs.
     """
     # TODO: Return |r1 - r2| + |c1 - c2|
-    return 0
+    ar, ac = node_a.value
+    br, bc = node_b.value 
+
+    return abs(ar-br)+ abs(ac-bc)
 
 
 ###############################################################################
@@ -213,6 +232,47 @@ def bidirectional_search(start_node, goal_node):
       3. If the frontiers intersect, reconstruct the path by combining partial paths.
     """
     # TODO: Implement bidirectional search
+    if start_node is None or goal_node is None:
+        return None 
+    
+    frontier_s = deque([start_node])
+    frontier_g = deque([goal_node])
+    explored_s = {start_node}
+    explored_g = {goal_node}
+    parent_map_s = {start_node: None}
+    parent_map_g = {goal_node: None}
+
+    while frontier_s and frontier_g:
+        current_s = frontier_s.popleft()
+        current_g = frontier_g.popleft()
+        explored_s.add(current_s)
+        explored_g.add(current_g)
+            
+        for neighbor in current_s.neighbors:
+            if neighbor not in explored_s:
+                explored_s.add(neighbor)
+                parent_map_s[neighbor] = current_s
+                frontier_s.append(neighbor)
+
+                if neighbor in explored_g:
+                    path_s = reconstruct_path(neighbor, parent_map_s)
+                    path_g = reconstruct_path(neighbor, parent_map_g)
+                    path = path_s + path_g[::-1][1:]
+                    return path 
+
+        for neighbor in current_g.neighbors:
+            if neighbor not in explored_g:
+                explored_g.add(neighbor)
+                parent_map_g[neighbor] = current_g
+                frontier_g.append(neighbor)
+
+                if neighbor in explored_s:
+                    path_s = reconstruct_path(neighbor, parent_map_s)
+                    path_g = reconstruct_path(neighbor, parent_map_g)
+                    path = path_s + path_g[::-1][1:]
+                    return path    
+
+
     return None
 
 
@@ -253,8 +313,15 @@ def reconstruct_path(end_node, parent_map):
       2. Collect node.value, reverse the list, return it.
     """
     # TODO: Implement path reconstruction
-    return None
+    path = []
+    current = end_node
 
+    while current is not None: 
+        path.append(current.value)
+        current = parent_map[current]
+
+    path.reverse()
+    return path
 
 ###############################################################################
 #                              Demo / Testing                                 #
