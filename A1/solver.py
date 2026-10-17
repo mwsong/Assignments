@@ -27,6 +27,8 @@ class Node:
          - node includes self in node.neighbors (undirected)
         """
         # TODO: Implement adding a neighbor in an undirected manner
+        self.neighbors.append(node)
+        node.neighbors.append(self)
         pass
 
     def __repr__(self):
@@ -58,9 +60,24 @@ def parse_maze_to_graph(maze):
     # 3) Identify start_node (if (0,0) is open) and goal_node (if (rows-1, cols-1) is open)
 
     # TODO: Implement the logic to build nodes and link neighbors
+    directions = [(0,1), (1, 0), (0, -1), (-1, 0)]
 
-    start_node = None
-    goal_node = None
+    for r in range(rows):
+        for c in range(cols):
+            if maze[r, c] == 0:
+                nodes_dict[(r, c)] = Node((r,c))
+
+    for node in nodes_dict.values():
+        r, c = node.value
+        for dr, dc in directions:
+            neighbor_val = (r+dr, c+dc)
+            if neighbor_val in nodes_dict:
+                neighbor = nodes_dict[neighbor_val]
+                if neighbor not in node.neighbors:
+                    node.add_neighbor(neighbor)
+
+    start_node = nodes_dict.get((0,0))
+    goal_node = nodes_dict.get((rows-1,cols-1))
 
     # TODO: Assign start_node and goal_node if they exist in nodes_dict
 
@@ -82,6 +99,31 @@ def bfs(start_node, goal_node):
       3. Also track parent_map to reconstruct the path once goal_node is reached.
     """
     # TODO: Implement BFS
+    if start_node is None or goal_node is None:
+        return None 
+    
+    frontier = deque([start_node])
+    explored = {start_node}
+    parent_map = {start_node: None}
+    path = []
+
+    while frontier:
+        current = frontier.popleft()
+        explored.add(current)
+
+        if current == goal_node:
+            while current is not None:
+                path.append(current.value)
+                current = parent_map[current]
+                path.reverse()
+                return path 
+            
+        for neighbor in current.neighbors:
+            if neighbor not in explored:
+                explored.add(neighbor)
+                parent_map[neighbor] = current
+                frontier.append(neighbor)
+
     return None
 
 
@@ -100,6 +142,31 @@ def dfs(start_node, goal_node):
       3. Reconstruct path via parent_map if goal_node is found.
     """
     # TODO: Implement DFS
+    if start_node is None or goal_node is None:
+        return None 
+        
+    frontier = [start_node]
+    explored = {start_node}
+    parent_map = {start_node: None}
+    path = []
+    
+    while frontier:
+        current = frontier.pop()
+        explored.add(current)
+    
+        if current == goal_node:
+            while current is not None:
+                path.append(current.value)
+                current = parent_map[current]
+                path.reverse()
+                return path 
+                
+        for neighbor in current.neighbors:
+            if neighbor not in explored:
+                explored.add(neighbor)
+                parent_map[neighbor] = current
+                frontier.append(neighbor)
+    
     return None
 
 
