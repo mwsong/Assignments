@@ -294,6 +294,27 @@ def simulated_annealing(start_node, goal_node, temperature=1.0, cooling_rate=0.9
       4. Decrease temperature each step by cooling_rate until below min_temperature or we reach goal_node.
     """
     # TODO: Implement simulated annealing
+    if start_node is None or goal_node is None:
+            return None 
+
+    current = start_node 
+    current_cost = manhattan_distance(current, goal_node)
+    parent_map = {start_node: None}
+
+    while temperature > min_temperature and current != goal_node:
+        neighbor = random.choice(current.neighbors)
+        next_cost = manhattan_distance(neighbor, goal_node)
+
+        cost_diff = next_cost - current_cost
+        if next_cost < current_cost or random.random() < math.exp(-cost_diff / temperature):
+            parent_map[neighbor] = current 
+            current = neighbor 
+            current_cost = next_cost
+
+        temperature *= cooling_rate
+
+    if current == goal_node:
+        return reconstruct_path(current, parent_map)
     return None
 
 
