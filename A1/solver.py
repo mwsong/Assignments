@@ -302,11 +302,13 @@ def simulated_annealing(start_node, goal_node, temperature=1.0, cooling_rate=0.9
     parent_map = {start_node: None}
 
     while temperature > min_temperature and current != goal_node:
+        if not current.neighbors:
+            return None 
         neighbor = random.choice(current.neighbors)
         next_cost = manhattan_distance(neighbor, goal_node)
 
         cost_diff = next_cost - current_cost
-        if next_cost < current_cost or random.random() < math.exp(-cost_diff / temperature):
+        if cost_diff < 0 or random.random() < math.exp(-cost_diff / temperature):
             parent_map[neighbor] = current 
             current = neighbor 
             current_cost = next_cost
@@ -314,7 +316,8 @@ def simulated_annealing(start_node, goal_node, temperature=1.0, cooling_rate=0.9
         temperature *= cooling_rate
 
     if current == goal_node:
-        return reconstruct_path(current, parent_map)
+        path = reconstruct_path(current, parent_map)
+        return path
     return None
 
 
