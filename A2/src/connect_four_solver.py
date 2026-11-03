@@ -252,6 +252,22 @@ if __name__ == "__main__":
 
     drop_piece(board, 4, 3, 1)
     drop_piece(board, get_next_open_row(board, 3), 3, 1)
+    #test minimax 1
+    print(board)
+
+    col, score = minimax(board, 4, float("-inf"), float("inf"), True)
+    print("col chosen for piece 2", col)
+    print(score)
+
+    drop_piece(board, 5, 2, 2)
+    drop_piece(board, 4, 2, 2)
+    drop_piece(board, 3, 2, 2)
+    print(board)
+
+    col, score = minimax(board, 4, float("-inf"), float("inf"), True)
+    print("col chosen for piece 2", col)
+    print(score)
+    
     drop_piece(board, get_next_open_row(board, 3), 3, 1)
 
     print(board)
