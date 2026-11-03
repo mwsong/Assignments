@@ -232,8 +232,8 @@ if __name__ == "__main__":
     # Simple debug scenario
     # Example usage: create a board, drop some pieces, then call minimax
     example_board = np.zeros((ROW_COUNT, COLUMN_COUNT))
-    #print("Debug: Created an empty Connect Four board.\n")
-    #print(example_board)
+    print("Debug: Created an empty Connect Four board.\n")
+    print(example_board)
 
     # TODO: Students can test their own logic here once implemented, e.g.:
     # drop_piece(example_board, some_row, some_col, 1)
@@ -241,7 +241,15 @@ if __name__ == "__main__":
     # print("Chosen column:", col, "Score:", score)
     board = create_board()
     print("board created")
-    #print(get_next_open_row(board, 1), "create_board successful")
+    print(get_next_open_row(board, 1), "create_board successful")
+
+    drop_piece(board, 5, 3, 1)
+    print("piece was dropped correctly:", board[5,3] == 1)
+    print(board)
+
+    print("is third column valid:" , is_valid_location(board, 3))
+    print("next row should be right above the last 1:", get_next_open_row(board, 3))
+
     
     print("hello")
     
