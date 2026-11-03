@@ -250,6 +250,15 @@ if __name__ == "__main__":
     print("is third column valid:" , is_valid_location(board, 3))
     print("next row should be right above the last 1:", get_next_open_row(board, 3))
 
+    drop_piece(board, 4, 3, 1)
+    drop_piece(board, get_next_open_row(board, 3), 3, 1)
+
+    print(board)
+    print("testing winning yes/no?:", winning_move(board, 1))
+
+    print("list of valid columns", get_valid_locations(board))
+    print("terminal?", is_terminal_node(board))
+
     
     print("hello")
     
