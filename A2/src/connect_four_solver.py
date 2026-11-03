@@ -188,9 +188,9 @@ def minimax(board, depth, alpha, beta, maximizingPlayer):
 
     if is_terminal_node(board):
         if winning_move(board, max_piece):
-            return (None, float("inf"))
+            return (None, 1000)
         elif winning_move(board, min_piece):
-            return(None, float("-inf"))
+            return(None, -1000)
         else:
             return (None, 0)
 
