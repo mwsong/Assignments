@@ -15,7 +15,7 @@ def create_board():
         A 2D numpy array of shape (ROW_COUNT, COLUMN_COUNT) filled with zeros (float).
     """
     # TODO: implement
-    pass
+    return np.zeros((ROW_COUNT, COLUMN_COUNT))
 
 
 def drop_piece(board, row, col, piece):
@@ -32,6 +32,7 @@ def drop_piece(board, row, col, piece):
     None. The 'board' is modified in-place. Do NOT return a new board!
     """
     # TODO: implement
+    board[row, col] = piece
     pass
 
 
@@ -47,7 +48,9 @@ def is_valid_location(board, col):
     bool: True if it's valid to drop a piece in this column, False otherwise.
     """
     # TODO: implement
-    pass
+    if np.all(board[:,col] != 0):
+        return False
+    return True 
 
 
 def get_next_open_row(board, col):
@@ -62,7 +65,10 @@ def get_next_open_row(board, col):
     int: The row index of the lowest empty cell in this column.
     """
     # TODO: implement
-    pass
+    if is_valid_location(board, col):
+        for row in range(ROW_COUNT -1, -1, -1):
+            if board[row, col] != 0:
+                return row
 
 
 def winning_move(board, piece):
@@ -78,7 +84,27 @@ def winning_move(board, piece):
     This requires checking horizontally, vertically, and diagonally.
     """
     # TODO: implement
-    pass
+    directions = [
+        (0, 1), 
+        (1, 0),
+        (1, 1), 
+        (1, -1)
+    ]
+
+    for dr, dc in directions:
+        for row in range(ROW_COUNT):
+            for col in range(COLUMN_COUNT):
+                
+                if not(0 <= row +3*dr < ROW_COUNT and 0 <= col+3*dc < COLUMN_COUNT):
+                    continue
+
+                if(board[row, col] == piece and board[row, col] == board[row+dr, col+dc] == board[row+2*dr,col +2*dc] == board[row+3*dr, col+3*dc]):
+                    return True 
+
+    return False   
+
+    
+    
 
 
 def get_valid_locations(board):
@@ -92,7 +118,15 @@ def get_valid_locations(board):
     list of int: The list of column indices that are not full.
     """
     # TODO: implement
-    pass
+    valid = []
+
+    for col in range(COLUMN_COUNT):
+        if is_valid_location(board, col):
+            valid.append(col)
+
+    return valid
+
+
 
 
 def is_terminal_node(board):
@@ -108,7 +142,9 @@ def is_terminal_node(board):
     bool: True if the game is over, False otherwise.
     """
     # TODO: implement
-    pass
+    if winning_move(board, 1) or winning_move(board, 2) or not get_valid_locations(board):
+        return True 
+    return False 
 
 
 def score_position(board, piece):
