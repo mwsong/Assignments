@@ -252,6 +252,7 @@ if __name__ == "__main__":
 
     drop_piece(board, 4, 3, 1)
     drop_piece(board, get_next_open_row(board, 3), 3, 1)
+    drop_piece(board, get_next_open_row(board, 3), 3, 1)
 
     print(board)
     print("testing winning yes/no?:", winning_move(board, 1))
@@ -259,6 +260,6 @@ if __name__ == "__main__":
     print("list of valid columns", get_valid_locations(board))
     print("terminal?", is_terminal_node(board))
 
-    
+
     print("hello")
     
