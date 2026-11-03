@@ -186,14 +186,22 @@ def minimax(board, depth, alpha, beta, maximizingPlayer):
     max_piece = 2
     min_piece = 1
 
-    if is_terminal_node(board) or depth == 0:
+    if is_terminal_node(board):
+        if winning_move(board, max_piece):
+            return (None, float("inf"))
+        elif winning_move(board, min_piece):
+            return(None, float("-inf"))
+        else:
+            return (None, 0)
+
+    if depth == 0:
         return (None, score_position(board, max_piece))
 
     valid = get_valid_locations(board)
-    best_score = float('inf')
-    best_col = None
 
     if maximizingPlayer:
+        best_score = float('-inf')
+        best_col = None
         for col in valid:
             row = get_next_open_row(board, col)
             drop_piece(board, row, col, max_piece)
@@ -210,6 +218,8 @@ def minimax(board, depth, alpha, beta, maximizingPlayer):
             if alpha >= beta:
                 break
     else:
+        best_score = float('inf')
+        best_col = None
         for col in valid:
             row = get_next_open_row(board, col)
             drop_piece(board, row, col, min_piece)
@@ -255,7 +265,7 @@ if __name__ == "__main__":
     #test minimax 1
     print(board)
 
-    col, score = minimax(board, 4, float("-inf"), float("inf"), True)
+    col, score = minimax(board, 2, float("-inf"), float("inf"), True)
     print("col chosen for piece 2", col)
     print(score)
 
@@ -264,10 +274,10 @@ if __name__ == "__main__":
     drop_piece(board, 3, 2, 2)
     print(board)
 
-    col, score = minimax(board, 4, float("-inf"), float("inf"), True)
+    col, score = minimax(board, 2, float("-inf"), float("inf"), True)
     print("col chosen for piece 2", col)
     print(score)
-    
+
     drop_piece(board, get_next_open_row(board, 3), 3, 1)
 
     print(board)
