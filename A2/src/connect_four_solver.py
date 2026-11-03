@@ -67,7 +67,7 @@ def get_next_open_row(board, col):
     # TODO: implement
     if is_valid_location(board, col):
         for row in range(ROW_COUNT -1, -1, -1):
-            if board[row, col] != 0:
+            if board[row, col] == 0:
                 return row
 
 
@@ -103,8 +103,6 @@ def winning_move(board, piece):
 
     return False   
 
-    
-    
 
 
 def get_valid_locations(board):
@@ -125,9 +123,6 @@ def get_valid_locations(board):
             valid.append(col)
 
     return valid
-
-
-
 
 def is_terminal_node(board):
     """
@@ -188,7 +183,49 @@ def minimax(board, depth, alpha, beta, maximizingPlayer):
           score: The heuristic score of the board state.
     """
     # TODO: implement
-    pass
+    max_piece = 2
+    min_piece = 1
+
+    if is_terminal_node(board) or depth == 0:
+        return (None, score_position(board, max_piece))
+
+    valid = get_valid_locations(board)
+    best_score = float('inf')
+    best_col = None
+
+    if maximizingPlayer:
+        for col in valid:
+            row = get_next_open_row(board, col)
+            drop_piece(board, row, col, max_piece)
+
+            new_score = minimax(board, depth -1, alpha, beta, False)[1]
+            board[row][col] = 0 
+
+            if new_score > best_score:
+                best_score = new_score 
+                best_col = col
+
+            alpha = max(alpha, best_score)
+
+            if alpha >= beta:
+                break
+    else:
+        for col in valid:
+            row = get_next_open_row(board, col)
+            drop_piece(board, row, col, min_piece)
+
+            new_score = minimax(board, depth -1, alpha, beta, True)[1]
+            board[row][col] = 0 
+
+            if new_score < best_score:
+                best_score = new_score 
+                best_col = col
+
+            beta = min(beta, best_score)
+
+            if alpha >= beta:
+                break
+    return (best_col, best_score)
 
 
 if __name__ == "__main__":
@@ -202,3 +239,5 @@ if __name__ == "__main__":
     # drop_piece(example_board, some_row, some_col, 1)
     # col, score = minimax(example_board, depth=4, alpha=-math.inf, beta=math.inf, maximizingPlayer=True)
     # print("Chosen column:", col, "Score:", score)
+    board = create_board()
+    print(get_next_open_row(board, 1))
