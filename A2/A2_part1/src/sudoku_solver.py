@@ -64,7 +64,7 @@ def is_valid(board, row, col, num):
     bool: True if valid, False otherwise.
     """
     # TODO: implement
-    for cell in row:
+    for cell in board[row]:
         if cell == num:
             return False 
         
