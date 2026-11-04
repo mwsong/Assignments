@@ -53,7 +53,7 @@ def egreedy(q_estimate: np.ndarray, epsilon: float) -> int:
 
     greedy_choice = greedy(q_estimate)
 
-    probabilities = np.ones(num_arms) * (epsilon/ (total-1))
+    probabilities = np.ones(num_arms) * (epsilon/ (num_arms-1))
     probabilities[greedy_choice] = 1 - epsilon
 
     return int(np.random.choice(num_arms, p=probabilities))
