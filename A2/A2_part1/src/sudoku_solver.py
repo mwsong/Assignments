@@ -175,5 +175,5 @@ if __name__ == "__main__":
     print("Debug: Original board:\n")
     print_board(example_board)
     # TODO: Students can call their solve_sudoku here once implemented and check if they got a correct solution.
-    solve_sudoku(example_board)
-    print(example_board)
+    print("was solve sudoku successful??", solve_sudoku(example_board))
+    print_board(example_board)
