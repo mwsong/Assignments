@@ -323,3 +323,4 @@ if __name__ == "__main__":
     board = create_board()
     drop_piece(board, 0, 0, 1)
     print(board)
+    print(board[0][0])
