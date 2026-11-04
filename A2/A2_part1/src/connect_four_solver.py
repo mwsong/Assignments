@@ -33,6 +33,7 @@ def drop_piece(board, row, col, piece):
     """
     # TODO: implement
     board[row, col] = piece
+    return None
 
 
 def is_valid_location(board, col):
