@@ -17,6 +17,9 @@ def update(q: float, r: float, k: int) -> float:
     """
     # Note: since k is the number of times the action has been taken before this update, we need to add 1 to k before using it in the formula.
     # TODO
+    a_t = 1/(k +1)
+    q_new = q + a_t* (r-q)
+    return q_new
 
 
 def greedy(q_estimate: np.ndarray) -> int:
@@ -30,6 +33,7 @@ def greedy(q_estimate: np.ndarray) -> int:
     int: The index of the action with the highest Q-value.
     """
     # TODO
+    return int(np.argmax(q_estimate))
 
 
 def egreedy(q_estimate: np.ndarray, epsilon: float) -> int:
@@ -45,6 +49,15 @@ def egreedy(q_estimate: np.ndarray, epsilon: float) -> int:
     int: The index of the selected action.
     """
     # TODO
+    total = len(q_estimate)
+
+    greedy = np.argmax(q_estimate)
+
+    probabilities = np.ones(n) * (epsilon/ (total-1))
+    probabilities[greedy] = 1 - epsilon
+
+    return int(np.random.choice(total, p=probabilities))
+
 
 
 def empirical_egreedy(epsilon: float, n_trials: int, n_arms: int, n_plays: int) -> List[List[float]]:
