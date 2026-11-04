@@ -275,7 +275,7 @@ if __name__ == "__main__":
     print(get_next_open_row(board, 1), "create_board successful")
 
 
-    drop_piece(board, 5, 3, 1)
+    drop_piece(board, 0, 3, 1)
     print("piece was dropped correctly:", board[5,3] == 1)
     print(board)
 
@@ -284,7 +284,7 @@ if __name__ == "__main__":
     print("next row should be right above the last 1:", get_next_open_row(board, 3))
 
 
-    drop_piece(board, 0, 3, 1)
+    drop_piece(board, 1, 3, 1)
     drop_piece(board, get_next_open_row(board, 3), 3, 1)
     #test minimax 1
     print(board)
