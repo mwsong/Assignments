@@ -320,3 +320,6 @@ if __name__ == "__main__":
 
 
     print("hello")
+    board = create_board()
+    drop_piece(board, 0, 0, 1)
+    print(board)
