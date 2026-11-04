@@ -284,7 +284,7 @@ if __name__ == "__main__":
     print("next row should be right above the last 1:", get_next_open_row(board, 3))
 
 
-    drop_piece(board, 4, 3, 1)
+    drop_piece(board, 0, 3, 1)
     drop_piece(board, get_next_open_row(board, 3), 3, 1)
     #test minimax 1
     print(board)
@@ -295,9 +295,9 @@ if __name__ == "__main__":
     print(score)
 
 
-    drop_piece(board, 5, 2, 2)
-    drop_piece(board, 4, 2, 2)
-    drop_piece(board, 3, 2, 2)
+    drop_piece(board, 0, 2, 2)
+    drop_piece(board, 1, 2, 2)
+    drop_piece(board, 2, 2, 2)
     print(board)
 
 
