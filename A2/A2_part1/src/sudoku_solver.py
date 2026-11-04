@@ -40,7 +40,11 @@ def find_empty_cell(board):
         - If there are no empty cells, returns None.
     """
     # TODO: implement
-    pass
+    for row_index, row in enumerate(board):
+        for col_index, cell in enumerate(row):
+            if cell == 0:
+                return (row_index, col_index)
+    return None
 
 
 def is_valid(board, row, col, num):
@@ -60,7 +64,24 @@ def is_valid(board, row, col, num):
     bool: True if valid, False otherwise.
     """
     # TODO: implement
-    pass
+    for cell in row:
+        if cell == num:
+            return False 
+        
+    for r in range(9):
+        if board[r][col] == num:
+            return False 
+
+    box_r = row//3
+    box_c = col//3 
+
+    for r in range(box_r*3, box_r*3 + 3):
+        for c in range(box_c*3, box_c*3 +3):
+            if board[r][c] == num:
+                return False 
+
+    return True
+        
 
 
 def solve_sudoku(board):
@@ -76,7 +97,26 @@ def solve_sudoku(board):
         - False if the puzzle is unsolvable.
     """
     # TODO: implement
-    pass
+    cell = find_empty_cell(board)
+
+    if cell is None:
+        return True 
+
+    row, col = cell 
+
+    for num in range(1,10):
+        if is_valid(board, row, col, num):
+            board[row][col] = num
+
+            if solve_sudoku(board):
+                return True 
+
+            board[row][col] = 0
+
+    return False
+
+
+
 
 
 def is_solved_correctly(board):
@@ -93,8 +133,30 @@ def is_solved_correctly(board):
     bool: True if the board is correctly solved, False otherwise.
     """
     # TODO: implement
-    pass
+    for row in board:
+        if set(row) != set(range(1,10)):
+            return False 
 
+    
+    for c in range(9):
+        col = []
+        for r in range(9):
+            col.append(board[r][c])
+        if set(col) != set(range(1,10)):
+            return False
+
+    for box_r in range(3):
+        for box_c in range(3):
+            box = []
+
+            for r in range(box_r*3, box_r*3 +3):
+                for c in range(box_c*3, box_c*3+3):
+                    box.append(board[r][c])
+
+            if set(box) != set(range(1, 10)):
+                return False
+
+    return True
 
 if __name__ == "__main__":
     # Example usage / debugging:
@@ -113,3 +175,5 @@ if __name__ == "__main__":
     print("Debug: Original board:\n")
     print_board(example_board)
     # TODO: Students can call their solve_sudoku here once implemented and check if they got a correct solution.
+    solve_sudoku(example_board)
+    print(example_board)
