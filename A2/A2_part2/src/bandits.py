@@ -49,14 +49,14 @@ def egreedy(q_estimate: np.ndarray, epsilon: float) -> int:
     int: The index of the selected action.
     """
     # TODO
-    total = len(q_estimate)
+    num_arms = len(q_estimate)
 
-    greedy = np.argmax(q_estimate)
+    greedy_choice = greedy(q_estimate)
 
-    probabilities = np.ones(n) * (epsilon/ (total-1))
-    probabilities[greedy] = 1 - epsilon
+    probabilities = np.ones(num_arms) * (epsilon/ (total-1))
+    probabilities[greedy_choice] = 1 - epsilon
 
-    return int(np.random.choice(total, p=probabilities))
+    return int(np.random.choice(num_arms, p=probabilities))
 
 
 
@@ -79,5 +79,23 @@ def empirical_egreedy(epsilon: float, n_trials: int, n_arms: int, n_plays: int) 
     rewards = []  # stores the rewards for each trial
 
     # TODO
+    for trial in range(n_trials):
+
+        bandits = np.random.normal(size = n_arms)
+        q_estimate = np.zeros(n_arms)
+        k_counts = np.zeros(n_arms)
+
+        trial_rewards = []
+        for play in range(n_plays):
+            action = egreedy(q_estimate, epsilon)
+            k = k_counts[action]
+
+            reward = np.random.normal(bandits[action], 1)
+            q_estimate[action] = update(q_estimate[action], reward, k)
+
+            k_counts[action]+=1
+
+            trial_rewards.append(reward)
+        rewards.append(trial_rewards)
 
     return rewards
