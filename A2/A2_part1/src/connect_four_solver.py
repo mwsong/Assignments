@@ -71,7 +71,7 @@ def get_next_open_row(board, col):
     """
     # TODO: implement
     if is_valid_location(board, col):
-        for row in range(ROW_COUNT -1, -1, -1):
+        for row in range(ROW_COUNT):
             if board[row, col] == 0:
                 return row
 
