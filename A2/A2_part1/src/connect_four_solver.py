@@ -48,9 +48,14 @@ def is_valid_location(board, col):
     bool: True if it's valid to drop a piece in this column, False otherwise.
     """
     # TODO: implement
-    if np.all(board[:,col] != 0):
-        return False
-    return True
+    #if np.all(board[:,col] != 0):
+        #return False
+    #return True
+
+    for row in range(ROW_COUNT):
+        if board[row][col] == 0:
+            return True 
+    return False 
 
 
 def get_next_open_row(board, col):
