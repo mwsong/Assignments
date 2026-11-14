@@ -44,12 +44,12 @@ class MonteCarloControl:
         self.Q0 = Q0 
         self.max_episode_size = max_episode_size
 
-        self.Q = defaultdict(lambda: np.zeros(self.env.n_actions) + self.Q0)
-        self.C = defaultdict(lambda: np.zeros(self.env.n_actions, dtype=float))
+        num_actions = env.n_actions
+        self.Q = defaultdict(lambda: np.full(num_actions, Q0, dtype=float))
+        self.C = defaultdict(lambda: np.zeros(num_actions, dtype=float))
 
-        self.target_policy = defaultdict(lambda: np.ones(self.env.n_actions) / self.env.n_actions)
-        self.behavior_policy = defaultdict(lambda: np.ones(self.env.n_actions) / self.env.n_actions)
-
+        self.target_policy = defaultdict(lambda: np.full(num_actions, 1/num_actions, dtype=float))
+        self.behavior_policy = defaultdict(lambda: np.full(num_actions, 1/num_actions, dtype=float))
 
     def create_target_greedy_policy(self):
         """
@@ -62,10 +62,10 @@ class MonteCarloControl:
         Returns: none, stores new policy in self.target_policy
         """
         for state in list(self.Q.keys()):
-            best_action = int(np.argmax(self.Q[state]))
-            greedy_prob_vector = np.zeros(self.env.n_actions, dtype=float)
-            greedy_prob_vector[best_action] = 1.0 
-            self.target_policy[state] = greedy_prob_vector 
+            greedy_action = int(np.argmax(self.Q[state]))
+            prob_vector = np.zeros(self.env.n_actions, dtype=float)
+            prob_vector[greedy_action] = 1.0 
+            self.target_policy[state] = prob_vector 
 
     def create_behavior_egreedy_policy(self):
         """
@@ -76,11 +76,10 @@ class MonteCarloControl:
         Args: none
         Returns: none, stores new policy in self.target_policy
         """
-        nA = self.env.n_actions
+        num_actions = self.env.n_actions
         for state in list(self.target_policy.keys()):
-            target_probs = self.target_policy[state]
-            (1 - self.epsilon) * target_probs + (self.epsilon / nA)
-            self.behavior_policy[state] = (1.0 - self.epsilon) * target_probs + (self.epsilon / nA) 
+            prob_vector = self.target_policy[state]
+            self.behavior_policy[state] = (1.0 - self.epsilon) * prob_vector + (self.epsilon / num_actions) 
 
 
         
@@ -95,8 +94,8 @@ class MonteCarloControl:
         Args: state (string): the current state in which to choose an action
         Returns: action (int): an action index between 0 and self.env.n_actions
         """
-        probs = self.behavior_policy[state]
-        action = random.choices(range(self.env.n_actions), weights=probs, k=1)[0]
+        prob = self.behavior_policy[state]
+        action = random.choices(range(self.env.n_actions), weights=prob, k=1)[0]
         return int(action)
 
     def generate_egreedy_episode(self):
@@ -174,12 +173,11 @@ class MonteCarloControl:
 
             self.Q[state][action] += (W / self.C[state][action]) * (G - self.Q[state][action])
 
-            greedy_action = int(np.argmax(self.Q[state]))
-            if action != greedy_action:
+            self.create_target_greedy_policy()
+            if action != np.argmax(self.target_policy[state]):
                 break 
 
-            prob_b = self.behavior_policy[state][action]
-            W = W*(1.0/prob_b)
+            W = W / self.behavior_policy[state][action]
 
         self.create_target_greedy_policy()
         self.create_behavior_egreedy_policy()
@@ -194,16 +192,20 @@ class MonteCarloControl:
         Returns: none
         """
         G = 0.0
-        for step in episode:
-            state_actions = [(step, step[1])]
+        returns = [0.0] * len(episode)
 
         for t in reversed(range(len(episode))):
             state, action, reward = episode[t]
             G = self.gamma * G + reward 
+            returns[t] = G
 
-            if (state, action) not in state_actions[:t]:
+        visited = set() 
+
+        for t, (state, action, reward) in enumerate(episode):
+            if (state, action) not in visited:
+                visited.add((state, action))
                 self.C[state][action] += 1.0
-                self.Q[state][action] += (1.0 / self.C[state][action]) * (G - self.Q[state][action])
+                self.Q[state][action] += (1.0 / self.C[state][action]) * (returns[t] - self.Q[state][action])
 
         self.create_target_greedy_policy()
         self.create_behavior_egreedy_policy()
