@@ -55,7 +55,23 @@ class TDLearning:
         self.env.reset()
         statekey = str(self.env.get_state())
 
-        # Your code here 
+        action = self.egreedy_selection(statekey)
+        for iteration in range(self.max_episode_size):  
+            reward = self.env.take_action(action)
+            next_state = self.env.get_state()
+            next_statekey = str(next_state)
+
+            episode.append((statekey, action, reward))
+            if self.env.is_terminal_state():
+                target = reward 
+                self.Q[statekey][action] += self.alpha * (target - self.Q[statekey][action])
+                break 
+            next_action = self.egreedy_selection(next_statekey)
+            target = reward + self.gamma* self.Q[next_statekey][next_action]
+
+            self.Q[statekey][action] += self.alpha * (target - self.Q[statekey][action])
+            statekey = next_statekey
+            action = next_action
 
         return episode
 
@@ -73,6 +89,17 @@ class TDLearning:
         episode = []
         self.env.reset()
 
-        # Your code here 
+        for iteration in range(self.max_episode_size):
+            statekey = str(self.env.get_state())
+            if statekey in self.Q:
+                action = int(np.argmax(self.Q[statekey]))
+            else:
+                action = random.randrange(self.env.n_actions)
+
+            reward = self.env.take_action(action)
+            episode.append((statekey, action, reward))
+
+            if self.env.is_terminal_state():
+                break
 
         return episode

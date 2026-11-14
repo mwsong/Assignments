@@ -224,6 +224,7 @@ if __name__ == "__main__":
     dp_solver.solve(method='policy_iteration')  # Change to 'value_iteration' if needed
     dp_solver.print_policy()
 
+    dp_solver = DynamicProgramming(env)
     dp_solver.solve(method='value_iteration')  
     dp_solver.print_policy()
 
