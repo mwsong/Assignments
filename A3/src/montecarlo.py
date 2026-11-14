@@ -146,7 +146,7 @@ class MonteCarloControl:
             if state in self.target_policy:
                 action = int(np.argmax(self.target_policy[state]))
             else:
-                action = random.randrange(self.env.n_actions)
+                action = int(np.argmax(self.Q[state]))
 
             reward = self.env.take_action(action)
             episode.append((state, action, reward))
